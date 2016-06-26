@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Contact Form 7 – Additional Types
+ * Plugin Name: Contact Form 7 Additional Types
  * Plugin URI: http://jankim.com/
- * Description: Additional input types for the Contact Form 7 plugin. Currently implemented: rangeslider
- * Version: 0.9b
+ * Description: Additional input field types for Contact Form 7.
+ * Version: 1.0
  * Author: Janis Freimann
  * Author URI: http://jankim.com/
  * Developer: Janis Freimann
@@ -31,21 +31,24 @@
 
 if( !defined('ABSPATH') ) exit;
 
+
 final class CF7_AdditionalTypes {
-    const PLUGIN_NAME = "Contact Form 7 – Additional Types";
-    const PLUGIN_VERSION = "0.9b";
+    const PLUGIN_NAME = "Contact Form 7 Additional Types";
+    const PLUGIN_VERSION = "1.0";
+    const PLUGIN_TEXTDOMAIN = "cf7-additional-types";
     private $types;
 
     function __construct() {
         $this->types = array('rangeslider');
+        load_plugin_textdomain(self::PLUGIN_TEXTDOMAIN, false, plugin_dir_url( __FILE__ ).'languages' );
     }
-    
+
     function enqueue_scripts_styles() {
-        wp_enqueue_style( 'wpcf7_rangeslider_stylesheet', plugin_dir_url( __FILE__ ).'assets/style.css' );
-
-        wp_register_script('ion_rangeslider', plugin_dir_url( __FILE__ ).'assets/ion.rangeSlider.min.js' );
-
-        wp_enqueue_script('wpcf7_rangeslider_js', plugin_dir_url( __FILE__ ).'assets/rangeslider.js', array('jquery', 'ion_rangeslider'));
+        if($this->_check_for_cf7()) {
+            wp_enqueue_style( 'wpcf7_rangeslider_stylesheet', plugin_dir_url( __FILE__ ).'assets/style.css' );
+            wp_register_script('ion_rangeslider', plugin_dir_url( __FILE__ ).'assets/ion.rangeSlider.min.js' );
+            wp_enqueue_script('wpcf7_rangeslider_js', plugin_dir_url( __FILE__ ).'assets/rangeslider.js', array('jquery', 'ion_rangeslider'));
+        }
     }
 
     function register_cf7_shortcodes() {
@@ -71,13 +74,28 @@ final class CF7_AdditionalTypes {
         }
     }
 
+    function dependencies_check() {
+        if( !$this->_check_for_cf7() && is_admin() ) {
+            add_action( 'admin_notices', function() {
+                echo '<div class="notice notice-warning is-dissmissible">'.
+                    '<p>'. sprintf( __( 'You need to install and activate the Contact Form 7 Plugin to use %s.', self::PLUGIN_TEXTDOMAIN ), self::PLUGIN_NAME ) .'</p>'.
+                    '</div>';
+            } );
+        }
+    }
+    
+    private function _check_for_cf7() {
+        return defined('WPCF7_PLUGIN');
+    }
+
     private function _stop_and_deactivate() {
         deactivate_plugins( plugin_basename( __FILE__ ) );
-        wp_die( sprintf( __('This version of %s is broken or incompatible with your WordPress installation. You can try to reinstall it from the WordPress repository.', 'cf7-additional-types'), self::PLUGIN_NAME ) );
+        wp_die( sprintf( __( 'This version of %s is broken or incompatible with your WordPress installation. You can try to reinstall it from the WordPress repository.', self::PLUGIN_TEXTDOMAIN ), self::PLUGIN_NAME ) );
     }
 }
 
 $cf7_additional_types = new CF7_AdditionalTypes();
+add_action( 'admin_init', array($cf7_additional_types, 'dependencies_check') );
 add_action( 'wpcf7_init', array($cf7_additional_types, 'register_cf7_shortcodes') );
 add_action( 'wp_enqueue_scripts', array($cf7_additional_types, 'enqueue_scripts_styles') );
 add_action( 'wpcf7_admin_init', array($cf7_additional_types, 'add_tag_generator'), 18 );
