@@ -1,4 +1,4 @@
-=== Contact Form 7 Additional Types ===
+=== CF7 Additional Types ===
 Contributors: janisf
 Donate link: http://jankim.com/donate/
 Tags: contact form 7, cf7, additional, extra, input fields, rangeslider, slider
@@ -12,7 +12,7 @@ Additional input field types for Contact Form 7.
 
 == Description ==
 
-# Contact Form 7 Additional Types
+# CF7 Additional Types
 
 This plugin extends Contact Form 7 by adding addtional input field types.
 
@@ -41,8 +41,9 @@ What I am working on for the next version:
 
 == Changelog ==
 
-= 1.0 =
-* First version that provides a rangeslider implementation.
+= 1.0.1 =
+* Rangeslider implementation.
+* Russian and German translations.
 
 == Other Notes ==
 

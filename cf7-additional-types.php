@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Contact Form 7 Additional Types
+ * Plugin Name: CF7 Additional Types
  * Plugin URI: http://jankim.com/
  * Description: Additional input field types for Contact Form 7.
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Janis Freimann
  * Author URI: http://jankim.com/
  * Developer: Janis Freimann
@@ -33,8 +33,8 @@ if( !defined('ABSPATH') ) exit;
 
 
 final class CF7_AdditionalTypes {
-    const PLUGIN_NAME = "Contact Form 7 Additional Types";
-    const PLUGIN_VERSION = "1.0";
+    const PLUGIN_NAME = "CF7 Additional Types";
+    const PLUGIN_VERSION = "1.0.1";
     const PLUGIN_TEXTDOMAIN = "cf7-additional-types";
     private $types;
 

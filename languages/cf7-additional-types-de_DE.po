@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Project-Id-Version: Contact Form 7 Additional Types\n"
+"Project-Id-Version: CF7 Additional Types\n"
 "POT-Creation-Date: 2016-06-26 11:29+0200\n"
 "PO-Revision-Date: 2016-06-26 14:33+0200\n"
 "Language-Team: \n"
@@ -38,8 +38,8 @@ msgstr ""
 "Plugin Katalog neu zu installieren."
 
 #. Plugin Name of the plugin/theme
-msgid "Contact Form 7 Additional Types"
-msgstr "Contact Form 7 Extra Feld-Typen"
+msgid "CF7 Additional Types"
+msgstr "CF7 Extra Feld-Typen"
 
 #. Plugin URI of the plugin/theme
 #. Author URI of the plugin/theme

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"Project-Id-Version: Contact Form 7 Additional Types\n"
+"Project-Id-Version: CF7 Additional Types\n"
 "POT-Creation-Date: 2016-06-26 11:29+0200\n"
 "PO-Revision-Date: 2016-06-26 14:22+0200\n"
 "Language-Team: \n"
@@ -38,8 +38,8 @@ msgstr ""
 "WordPress."
 
 #. Plugin Name of the plugin/theme
-msgid "Contact Form 7 Additional Types"
-msgstr "Contact Form 7 Дополнительные Типы"
+msgid "CF7 Additional Types"
+msgstr "CF7 Дополнительные типы"
 
 #. Plugin URI of the plugin/theme
 #. Author URI of the plugin/theme
