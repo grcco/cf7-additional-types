@@ -1,76 +1,119 @@
 <?php
 /**
  * Plugin Name: CF7 Additional Types
- * Plugin URI: http://jankim.com/
+ * Plugin URI: https://github.com/meostudio/cf7-additional-types
  * Description: Additional input field types for Contact Form 7.
- * Version: 1.0.1
- * Author: Janis Freimann
- * Author URI: http://jankim.com/
+ * Version: 2.0.0a
+ * Author: meo.studio
+ * Author URI: https://meo.studio/
  * Developer: Janis Freimann
- * Developer E-Mail: janis.freimann@gmail.com
+ * Developer E-Mail: janis@meo.studio
  * Text Domain: cf7-additional-types
  * Domain Path: /languages
  *
- * Copyright: © 2016 Janis Freimann
+ * Copyright: © 2017 meostudio OÜ
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  *
  * Credits:
- *
- * this plugin uses Ion.RangeSlider, distributed under the MIT license:
- *
-    Copyright (C) 2016 by Denis Ineshin
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * this plugin uses Ion.RangeSlider and Ion.Calendar, distributed under the MIT license.
  *
 */
 
 if( !defined('ABSPATH') ) exit;
 
-
 final class CF7_AdditionalTypes {
     const PLUGIN_NAME = "CF7 Additional Types";
-    const PLUGIN_VERSION = "1.0.1";
+    const PLUGIN_VERSION = "2.0";
     const PLUGIN_TEXTDOMAIN = "cf7-additional-types";
-    private $types;
+    private $types = [
+        'rangeslider',
+    ];
+    private $instances = [];
+    private $assets = [];
 
-    function __construct() {
-        $this->types = array('rangeslider');
-        load_plugin_textdomain(self::PLUGIN_TEXTDOMAIN, false, plugin_dir_url( __FILE__ ).'languages' );
+    private static $instance;
+
+    private function __construct() { }
+
+    public function construct() {
+        load_plugin_textdomain( CF7AT_TEXTDOMAIN, false, plugin_dir_url( __FILE__ ).'languages' );
+
+        add_action( 'admin_init', [$this, 'dependencies_check'] );
+        add_action( 'wpcf7_init', [$this, 'register_cf7_shortcodes'] );
+        add_action( 'wp_enqueue_scripts', [$this, 'enqueue_scripts_styles'] );
+        add_action( 'wpcf7_admin_init', [$this, 'add_tag_generators'], 18 );
+
+        foreach($this->types as $type) {
+            require plugin_dir_path( __FILE__ ). "inc/{$type}.php";
+
+            $classname = __CLASS__ . '_' . ucfirst($type);
+            $this->instances[$type] = new $classname();
+            $instance = &$this->instances[$type];
+
+            if(!method_exists($instance, 'shortcode_handler') || !property_exists($instance, 'title')) {
+                $this->_stop_and_deactivate();
+            }
+        }
+    }
+
+    public static function init() {
+        if ( empty( self::$instance ) ) {
+            self::$instance = new self;
+            define( 'CF7AT_TEXTDOMAIN', self::PLUGIN_TEXTDOMAIN );
+
+            self::$instance->construct();
+        }
+    }
+
+    public static function get_instance() {
+        if ( empty( self::$instance ) ) {
+            self::init();
+        }
+
+        return self::$instance;
+    }
+
+    function add_js_asset($name, $filename, $dependepcies = [], $in_footer = false) {
+        if(!is_array($dependepcies)) $dependepcies = [];
+        if(!is_bool($in_footer)) $in_footer = false;
+
+        $this->assets[] = [$name, $filename, $dependepcies, $in_footer];
     }
 
     function enqueue_scripts_styles() {
         if($this->_check_for_cf7()) {
-            wp_enqueue_style( 'wpcf7_rangeslider_stylesheet', plugin_dir_url( __FILE__ ).'assets/style.css' );
-            wp_register_script('ion_rangeslider', plugin_dir_url( __FILE__ ).'assets/ion.rangeSlider.min.js' );
-            wp_enqueue_script('wpcf7_rangeslider_js', plugin_dir_url( __FILE__ ).'assets/rangeslider.js', array('jquery', 'ion_rangeslider'));
+            wp_enqueue_style( 'wpcf7-additional-types', plugin_dir_url( __FILE__ ).'assets/css/style.css' );
+
+            foreach($this->assets as $asset) {
+                wp_enqueue_script( $asset[0], plugin_dir_url( __FILE__ ).'assets/js/'.$asset[1], $asset[2], self::PLUGIN_VERSION, $asset[3] );
+            }
         }
     }
 
     function register_cf7_shortcodes() {
-        foreach($this->types as $item) {
-            $func = 'wpcf7_'.$item.'_shortcode_handler';
+        foreach($this->instances as $type => $instance) {
+            wpcf7_add_shortcode( [$type, $type.'*'], [$instance, 'shortcode_handler'], true );
 
-            if(!function_exists($func))
-                $this->_stop_and_deactivate();
-            else
-                wpcf7_add_shortcode( array($item, $item.'*'), $func, true );
+            if(method_exists($instance, 'validation_filter')) {
+                add_filter( 'wpcf7_validate_'.$type, [$instance, 'validation_filter'], 10, 2 );
+                add_filter( 'wpcf7_validate_'.$type.'*', [$instance, 'validation_filter'], 10, 2 );
+                if(method_exists($instance, 'messages')) {
+                    add_filter( 'wpcf7_messages', [$instance, 'messages'] );
+                }
+            }
         }
     }
-    
-    function add_tag_generator() {
-        $tag_generator = WPCF7_TagGenerator::get_instance();
-        foreach($this->types as $item) {
-            $func = 'wpcf7_tag_generator_'.$item;
 
-            if(!function_exists($func))
+    function add_tag_generators() {
+        $tag_generator = WPCF7_TagGenerator::get_instance();
+
+        foreach($this->instances as $type => $instance) {
+            if(!method_exists($instance, 'tag_generator')) {
                 $this->_stop_and_deactivate();
-            else
-                $tag_generator->add( $item, $item, $func );
+            } else {
+                $tag_generator->add( $type, $instance->title, [$instance, 'tag_generator'] );
+            }
         }
     }
 
@@ -78,135 +121,21 @@ final class CF7_AdditionalTypes {
         if( !$this->_check_for_cf7() && is_admin() ) {
             add_action( 'admin_notices', function() {
                 echo '<div class="notice notice-warning is-dissmissible">'.
-                    '<p>'. sprintf( __( 'You need to install and activate the Contact Form 7 Plugin to use %s.', self::PLUGIN_TEXTDOMAIN ), self::PLUGIN_NAME ) .'</p>'.
+                    '<p>'. sprintf( __( 'You need to install and activate the Contact Form 7 Plugin to use %s.', CF7AT_TEXTDOMAIN ), self::PLUGIN_NAME ) .'</p>'.
                     '</div>';
             } );
         }
     }
-    
+
     private function _check_for_cf7() {
         return defined('WPCF7_PLUGIN');
     }
 
     private function _stop_and_deactivate() {
+        require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         deactivate_plugins( plugin_basename( __FILE__ ) );
-        wp_die( sprintf( __( 'This version of %s is broken or incompatible with your WordPress installation. You can try to reinstall it from the WordPress repository.', self::PLUGIN_TEXTDOMAIN ), self::PLUGIN_NAME ) );
+        wp_die( sprintf( __( 'This version of %s is broken or incompatible with your WordPress installation. Please try to reinstall it from the WordPress repository.', CF7AT_TEXTDOMAIN ), self::PLUGIN_NAME ) );
     }
 }
 
-$cf7_additional_types = new CF7_AdditionalTypes();
-add_action( 'admin_init', array($cf7_additional_types, 'dependencies_check') );
-add_action( 'wpcf7_init', array($cf7_additional_types, 'register_cf7_shortcodes') );
-add_action( 'wp_enqueue_scripts', array($cf7_additional_types, 'enqueue_scripts_styles') );
-add_action( 'wpcf7_admin_init', array($cf7_additional_types, 'add_tag_generator'), 18 );
-
-
-function wpcf7_rangeslider_shortcode_handler( $tag ) {
-	$tag = new WPCF7_Shortcode( $tag );
-
-	if ( empty( $tag->name ) ) return '';
-
-	$validation_error = wpcf7_get_validation_error( $tag->name );
-
-	$class = wpcf7_form_controls_class( $tag->type );
-
-	$class .= ' wpcf7-validates-as-rangeslider';
-
-	if ( $validation_error )
-		$class .= ' wpcf7-not-valid';
-
-	$atts = array();
-
-	$atts['class'] = $tag->get_class_option( $class );
-	$atts['id'] = $tag->get_id_option();
-	$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
-
-    if ( $tag->is_required() ) $atts['aria-required'] = 'true';
-
-	$atts['aria-invalid'] = $validation_error ? 'true' : 'false';
-
-    $values = $tag->values;  
-	if ( $data = (array) $tag->get_data_option() ) {
-		$values = array_merge( $values, array_values( $data ) );
-	}
-
-    $html = null;
-    if(count($values) > 0) {
-        $default = intval($tag->get_option( 'default', 'int', true ))-1;
-        if(!isset($values[$default])) $default = 0;
-        
-        $atts['type'] = 'text';
-        $atts['name'] = $tag->name;
-        $atts['value'] = $values[$default];
-        $atts['data-min'] = 1;
-        $atts['data-max'] = count($values);
-        $atts['data-values-json'] = '[\''.implode("','", $values).'\']';
-        $atts['data-from'] = $default;
-        $labels = '';
-
-        for($i=0;$i<count($values);$i++) {
-            $labels .= '<span data-index="'.$i.'" class="wpcf7-form-rangeslider-label '.($default!=$i?'hidden':'').'">'.$values[$i].'</span>';
-        }
-
-        $atts = wpcf7_format_atts( $atts );
-        $html = sprintf('<span class="wpcf7-form-control-wrap wpcf7-form-rangeslider-wrap %1$s"><input %2$s>%3$s</span>',
-            sanitize_html_class( $tag->name ), $atts, $validation_error );
-    }
-
-    return $html;
-}
-
-
-function wpcf7_tag_generator_rangeslider( $contact_form, $args = '' ) {
-	$args = wp_parse_args( $args, array() );
-	$type = 'rangeslider';
-	$description = "Generate a range slider.";
-?>
-<div class="control-box">
-<fieldset>
-<legend><?=esc_html( $description )?></legend>
-
-<table class="form-table">
-<tbody>
-	<tr>
-	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?></label></th>
-	<td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>" /></td>
-	</tr>
-    
-    <tr>
-	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>"><?php echo esc_html( __( 'Values', 'contact-form-7' ) ); ?></label></th>
-	<td><textarea name="values" class="values" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>"></textarea></td>
-	</tr>
-    
-    <tr>
-	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>"><?php echo esc_html( __( 'Default value', 'contact-form-7' ) ); ?></label></th>
-	<td><input type="number" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-default' ); ?>" /></td>
-	</tr>
-
-	<tr>
-	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
-	<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>" /></td>
-	</tr>
-
-	<tr>
-	<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th>
-	<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" /></td>
-	</tr>
-</tbody>
-</table>
-</fieldset>
-</div>
-
-<div class="insert-box">
-	<input type="text" name="<?php echo $type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
-
-	<div class="submitbox">
-	<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'contact-form-7' ) ); ?>" />
-	</div>
-
-	<br class="clear" />
-
-	<p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
-</div>
-<?php
-}
+CF7_AdditionalTypes::init();

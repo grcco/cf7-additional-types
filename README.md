@@ -7,11 +7,10 @@ This plugin extends Contact Form 7 by adding addtional input field types.
 
 Implemented Types:
 
-*   Rangeslider
-    
-    HTML5-based rangeslider (using Ion.RangeSlider jQuery Plugin)
+* Rangeslider (using Ion.RangeSlider jQuery Plugin version 2.1.2)
+* Datepicker (using Ion.Calendar jQuery Plugin version 2.0.2 with moment.js 2.14.1)
 
 What I am working on for the next version:
 
-*   Datepicker, Timepicker
+*   Timepicker
 *   Translations
