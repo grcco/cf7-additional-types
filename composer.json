@@ -1,0 +1,7 @@
+{
+    "require-dev": {
+        "brainmaestro/composer-git-hooks": "^2.6",
+        "wp-coding-standards/wpcs": "^2.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.0"
+    }
+}
