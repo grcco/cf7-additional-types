@@ -18,6 +18,10 @@ class ComposerStaticInitd0ea4db4a752b23b650bd4b65ed2f4ef
             'Symfony\\Contracts\\' => 18,
             'Symfony\\Component\\Console\\' => 26,
         ),
+        'D' => 
+        array (
+            'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 55,
+        ),
         'B' => 
         array (
             'BrainMaestro\\GitHooks\\' => 22,
@@ -36,6 +40,10 @@ class ComposerStaticInitd0ea4db4a752b23b650bd4b65ed2f4ef
         'Symfony\\Component\\Console\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/console',
+        ),
+        'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src',
         ),
         'BrainMaestro\\GitHooks\\' => 
         array (
