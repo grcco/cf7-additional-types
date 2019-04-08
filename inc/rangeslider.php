@@ -4,10 +4,9 @@ final class CF7_AdditionalTypes_Rangeslider {
 	public $title = '';
 
 	public function __construct() {
-		$this->title = _x( 'Rangeslider', 'Tag Label', CF7AT_TEXTDOMAIN );
+		$this->title = _x( 'Range Slider', 'Tag Label', CF7AT_TEXTDOMAIN );
 		$cf7at       = CF7_AdditionalTypes::get_instance();
 		$cf7at->add_js_asset( 'ion_rangeslider', 'ion.rangeSlider.min.js', [ 'jquery' ] );
-		$cf7at->add_js_asset( 'cf7at-rangeslider_js', 'rangeslider.js', [ 'ion_rangeslider' ] );
 	}
 
 	public function shortcode_handler( $tag ) {
@@ -85,18 +84,18 @@ final class CF7_AdditionalTypes_Rangeslider {
 			? trim( strtr( (string) $_POST[ $name ], "\n", ' ' ) )
 			: '';
 
-		$min = $tag->get_option( 'min', 'signed_int', true );
-		$max = $tag->get_option( 'max', 'signed_int', true );
+		// $min = $tag->get_option( 'min', 'signed_int', true );
+		// $max = $tag->get_option( 'max', 'signed_int', true );
 
 		if ( $tag->is_required() && '' == $value ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'invalid_required' ) );
-		} elseif ( '' != $value && ! wpcf7_is_number( $value ) ) {
+		}/* elseif ( '' != $value && ! wpcf7_is_number( $value ) ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'invalid_number' ) );
 		} elseif ( '' != $value && '' != $min && (float) $value < (float) $min ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'number_too_small' ) );
 		} elseif ( '' != $value && '' != $max && (float) $max < (float) $value ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'number_too_large' ) );
-		}
+		} */
 
 		return $result;
 	}
@@ -127,7 +126,9 @@ final class CF7_AdditionalTypes_Rangeslider {
 
 		<tr>
 		<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>"><?php echo esc_html( __( 'Default value', 'contact-form-7' ) ); ?></label></th>
-		<td><input type="number" name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-default' ); ?>" /></td>
+		<td><select name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-default' ); ?>">
+            <option value=""><?php echo esc_html( _x( 'None', 'Default Value Drop-Down', CF7AT_TEXTDOMAIN ) ); ?></option>
+        </select></td>
 		</tr>
 
 		<tr>
