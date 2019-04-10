@@ -4,8 +4,8 @@
  * Plugin URI: https://github.com/meostudio/cf7-additional-types
  * Description: Additional input field types for Contact Form 7.
  * Version: 2.0.0
- * Author: meo.studio
- * Author URI: https://meo.studio/
+ * Author: Janis Freimann, meo.studio
+ * Author URI: https://janfrei.me/
  * Developer: Janis Freimann
  * Developer E-Mail: janis@meo.studio
  * Text Domain: cf7-additional-types
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class CF7_AdditionalTypes {
 	const PLUGIN_NAME       = 'CF7 Additional Types';
-	const PLUGIN_VERSION    = '2.0';
+	const PLUGIN_VERSION    = '2.0.0';
 	const PLUGIN_TEXTDOMAIN = 'cf7-additional-types';
 	private $types          = [
 		'rangeslider',
@@ -52,7 +52,7 @@ final class CF7_AdditionalTypes {
 			require plugin_dir_path( __FILE__ ) . "inc/{$type}.php";
 
 			$classname                = __CLASS__ . '_' . ucfirst( $type );
-			$this->instances[ $type ] = new $classname();
+			$this->instances[ $type ] = new $classname( $type );
 			$instance                 = &$this->instances[ $type ];
 
 			if ( ! method_exists( $instance, 'shortcode_handler' ) || ! property_exists( $instance, 'title' ) ) {
@@ -107,7 +107,8 @@ final class CF7_AdditionalTypes {
 
 	public function register_cf7_shortcodes() {
 		foreach ( $this->instances as $type => $instance ) {
-			wpcf7_add_shortcode( [ $type, $type . '*' ], [ $instance, 'shortcode_handler' ], true );
+            $codes = ( $instance->supports_required ) ? [ $type, $type . '*' ] : [ $type ];
+			wpcf7_add_shortcode( $codes, [ $instance, 'shortcode_handler' ], true );
 
 			if ( method_exists( $instance, 'validation_filter' ) ) {
 				add_filter( 'wpcf7_validate_' . $type, [ $instance, 'validation_filter' ], 10, 2 );
