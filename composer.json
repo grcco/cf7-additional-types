@@ -5,18 +5,5 @@
         "phpcompatibility/phpcompatibility-wp": "^2.0",
         "xwp/wp-dev-lib": "^1.1",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0"
-    },
-    "extra": {
-        "hooks": {
-            "pre-commit": "./vendor/xwp/wp-dev-lib/scripts/pre-commit"
-        }
-    },
-    "scripts": {
-        "post-install-cmd": [
-            "vendor/bin/cghooks add --no-lock"
-        ],
-        "post-update-cmd": [
-            "vendor/bin/cghooks update"
-        ]
     }
 }
