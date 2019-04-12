@@ -2,12 +2,12 @@
 
 final class CF7_AdditionalTypes_Rangeslider {
 	public $title;
-    public $type;
-    public $supports_required = false;
+	public $type;
+	public $supports_required = false;
 
 	public function __construct( $type ) {
 		$this->title = _x( 'Range Slider', 'Tag Label', CF7AT_TEXTDOMAIN );
-        $this->type  = $type;
+		$this->type  = $type;
 		$cf7at       = CF7_AdditionalTypes::get_instance();
 		$cf7at->add_js_asset( 'ion_rangeslider', 'ion.rangeSlider.min.js', [ 'jquery' ] );
 	}
@@ -21,7 +21,7 @@ final class CF7_AdditionalTypes_Rangeslider {
 
 		$class = wpcf7_form_controls_class( $tag->type );
 
-		$class .= ' wpcf7-validates-as-'.$this->type;
+		$class .= ' wpcf7-validates-as-' . $this->type;
 
 		if ( $validation_error ) {
 			$class .= ' wpcf7-not-valid';
@@ -57,12 +57,12 @@ final class CF7_AdditionalTypes_Rangeslider {
 			$labels                   = '';
 
 			for ( $i = 0;$i < count( $values );$i++ ) {
-				$labels .= '<span data-index="' . $i . '" class="wpcf7-form-'.$this->type.'-label ' . ( $default != $i ? 'hidden' : '' ) . '">' . $values[ $i ] . '</span>';
+				$labels .= '<span data-index="' . $i . '" class="wpcf7-form-' . $this->type . '-label ' . ( $default != $i ? 'hidden' : '' ) . '">' . $values[ $i ] . '</span>';
 			}
 
 			$atts = wpcf7_format_atts( $atts );
 			$html = sprintf(
-				'<span class="wpcf7-form-control-wrap wpcf7-form-'.$this->type.'-wrap %1$s"><input %2$s>%3$s</span>',
+				'<span class="wpcf7-form-control-wrap wpcf7-form-' . $this->type . '-wrap %1$s"><input %2$s>%3$s</span>',
 				sanitize_html_class( $tag->name ),
 				$atts,
 				$validation_error
@@ -83,8 +83,8 @@ final class CF7_AdditionalTypes_Rangeslider {
 
 		// $min = $tag->get_option( 'min', 'signed_int', true );
 		// $max = $tag->get_option( 'max', 'signed_int', true );
-
-		/* if ( '' != $value && ! wpcf7_is_number( $value ) ) {
+		/*
+		 if ( '' != $value && ! wpcf7_is_number( $value ) ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'invalid_number' ) );
 		} elseif ( '' != $value && '' != $min && (float) $value < (float) $min ) {
 			$result->invalidate( $tag, wpcf7_get_message( 'number_too_small' ) );
@@ -112,17 +112,17 @@ final class CF7_AdditionalTypes_Rangeslider {
 		</td></tr>
 
 		<tr><th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default' ); ?>"><?php echo esc_html( __( 'Default value', 'contact-form-7' ) ); ?></label></th><td>
-            <select name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-default' ); ?>">
-                <option value=""><?php echo esc_html( _x( 'None', 'Default Value Drop-Down', CF7AT_TEXTDOMAIN ) ); ?></option>
-            </select>
-        </td></tr>
+			<select name="default" class="defaultvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-default' ); ?>">
+				<option value=""><?php echo esc_html( _x( 'None', 'Default Value Drop-Down', CF7AT_TEXTDOMAIN ) ); ?></option>
+			</select>
+		</td></tr>
 
 		<tr><th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
 		<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>" /></td></tr>
 
 		<tr><th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th><td>
-            <input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" />
-        </td></tr>
+			<input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" />
+		</td></tr>
 	</tbody></table>
 </fieldset></div>
 
@@ -130,7 +130,7 @@ final class CF7_AdditionalTypes_Rangeslider {
 	<input type="text" name="<?php echo $this->type; ?>" class="tag code" readonly="readonly" onfocus="this.select()" />
 
 	<div class="submitbox">
-        <input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'contact-form-7' ) ); ?>" />
+		<input type="button" class="button button-primary insert-tag" value="<?php echo esc_attr( __( 'Insert Tag', 'contact-form-7' ) ); ?>" />
 	</div>
 
 	<br class="clear" />
@@ -140,7 +140,8 @@ final class CF7_AdditionalTypes_Rangeslider {
 		<?php
 	}
 
-	/* public function messages( $messages ) {
+	/*
+	 public function messages( $messages ) {
 		return array_merge(
 			$messages,
 			[
