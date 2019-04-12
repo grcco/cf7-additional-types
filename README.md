@@ -1,16 +1,26 @@
-# cf7-additional-types
-«CF7 Additional Types» WordPress Plugin
+# «CF7 Additional Types» WordPress Plugin
 
 ## Description
 
-This plugin extends Contact Form 7 by adding addtional input field types.
+This plugin extends Contact Form 7 with additional input field types.
 
 Implemented Types:
 
-* Rangeslider (using Ion.RangeSlider jQuery Plugin version 2.1.2)
-* Datepicker (using Ion.Calendar jQuery Plugin version 2.0.2 with moment.js 2.14.1)
+* Range Slider (using Ion.RangeSlider jQuery Plugin version 2.1.2)
+* Date Picker (using Ion.Calendar jQuery Plugin version 2.0.2 with moment.js 2.14.1)
 
-What I am working on for the next version:
+Types I am considering the next version:
 
-*   Timepicker
-*   Translations
+Time Picker, On/Off Toggles.
+
+## Credits
+
+Denis Ineshin for [Ion.RangeSlider](https://github.com/IonDen/ion.rangeSlider) and [Ion.Calendar](https://github.com/IonDen/ion.calendar/)
+
+## Contribute
+
+If you have any suggestions or ideas, just let me know!
+
+## License & Copyright
+
+GPLv2 or later. Copyright (c) 2017 - 2019 Janis Freimann
