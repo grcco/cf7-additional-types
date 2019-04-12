@@ -3,4 +3,7 @@ jQuery(document).ready(function($) {
         var values = JSON.parse($(element).data('values-json').replace(/'/g,'"'));
         $(element).ionRangeSlider({input_values_separator: ';', values: values});
     });
+    $('input.wpcf7-datepicker').each(function(index, element) {
+        $(element).ionDatePicker();
+    });
 });

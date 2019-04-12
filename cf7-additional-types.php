@@ -29,9 +29,12 @@ final class CF7_AdditionalTypes {
 	const PLUGIN_TEXTDOMAIN = 'cf7-additional-types';
 	private $types          = [
 		'rangeslider',
+        'datepicker'
 	];
 	private $instances      = [];
 	private $assets         = [];
+    private $admin_assets   = [];
+    private $admin_css      = false;
 
 	private static $instance;
 
@@ -60,7 +63,7 @@ final class CF7_AdditionalTypes {
 			}
 		}
 
-        $this->add_js_asset( 'cf7-additional-types', 'plugin.js', ['jquery'] );
+        $this->add_js_asset( 'cf7-additional-types', 'plugin.min.js', ['jquery'] );
 	}
 
 	public static function init() {
@@ -80,7 +83,7 @@ final class CF7_AdditionalTypes {
 		return self::$instance;
 	}
 
-	public function add_js_asset( $name, $filename, $dependepcies = [], $in_footer = false ) {
+	public function add_js_asset( $name, $filename, $dependepcies = [], $in_footer = false, $admin = false ) {
 		if ( ! is_array( $dependepcies ) ) {
 			$dependepcies = [];
 		}
@@ -88,12 +91,20 @@ final class CF7_AdditionalTypes {
 			$in_footer = false;
 		}
 
-		$this->assets[] = [ $name, $filename, $dependepcies, $in_footer ];
+        if ( $admin ) {
+            $this->admin_assets[] = [ $name, $filename, $dependepcies, $in_footer ];
+        } else {
+            $this->assets[] = [ $name, $filename, $dependepcies, $in_footer ];
+        }
 	}
+
+    public function load_css_on_admin() {
+        $this->admin_css = true;
+    }
 
 	public function enqueue_scripts_styles() {
 		if ( $this->check_for_cf7() ) {
-			wp_enqueue_style( 'wpcf7-additional-types', plugin_dir_url( __FILE__ ) . 'assets/css/style.css', [], self::PLUGIN_VERSION );
+			wp_enqueue_style( 'wpcf7-additional-types', plugin_dir_url( __FILE__ ) . 'assets/css/style.min.css', [], self::PLUGIN_VERSION );
 
 			foreach ( $this->assets as $asset ) {
 				wp_enqueue_script( $asset[0], plugin_dir_url( __FILE__ ) . 'assets/js/' . $asset[1], $asset[2], self::PLUGIN_VERSION, $asset[3] );
@@ -102,7 +113,15 @@ final class CF7_AdditionalTypes {
 	}
 
     public function enqueue_admin_scripts_styles() {
-        wp_enqueue_script( 'wpcf7-additional-types-admin', plugin_dir_url( __FILE__ ) . 'assets/js/admin.js', ['jquery'], self::PLUGIN_VERSION );
+        if ( $this->admin_css ) {
+            wp_enqueue_style( 'wpcf7-additional-types', plugin_dir_url( __FILE__ ) . 'assets/css/style.min.css', [], self::PLUGIN_VERSION );
+        }
+
+        wp_enqueue_script( 'wpcf7-additional-types-admin', plugin_dir_url( __FILE__ ) . 'assets/js/admin.min.js', ['jquery'], self::PLUGIN_VERSION );
+
+        foreach ( $this->admin_assets as $asset ) {
+            wp_enqueue_script( $asset[0], plugin_dir_url( __FILE__ ) . 'assets/js/' . $asset[1], $asset[2], self::PLUGIN_VERSION, $asset[3] );
+        }
     }
 
 	public function register_cf7_shortcodes() {
