@@ -3,7 +3,7 @@
  * Plugin Name: CF7 Additional Types
  * Plugin URI: https://github.com/meostudio/cf7-additional-types
  * Description: Additional input field types for Contact Form 7.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: Janis Freimann, meo.studio
  * Author URI: https://janfrei.me/
  * Developer: Janis Freimann
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class CF7_AdditionalTypes {
 	const PLUGIN_NAME       = 'CF7 Additional Types';
-	const PLUGIN_VERSION    = '2.0.0';
+	const PLUGIN_VERSION    = '2.0.1';
 	const PLUGIN_TEXTDOMAIN = 'cf7-additional-types';
 	private $types          = [
 		'rangeslider',
