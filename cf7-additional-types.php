@@ -131,7 +131,10 @@ final class CF7_AdditionalTypes {
 
 			if ( method_exists( $instance, 'validation_filter' ) ) {
 				add_filter( 'wpcf7_validate_' . $type, [ $instance, 'validation_filter' ], 10, 2 );
-				add_filter( 'wpcf7_validate_' . $type . '*', [ $instance, 'validation_filter' ], 10, 2 );
+				if ( $instance->supports_required ) {
+                    add_filter( 'wpcf7_validate_' . $type . '*', [ $instance, 'validation_filter' ], 10, 2 );
+                }
+
 				if ( method_exists( $instance, 'messages' ) ) {
 					add_filter( 'wpcf7_messages', [ $instance, 'messages' ] );
 				}

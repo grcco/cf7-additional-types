@@ -13,9 +13,6 @@ final class CF7_AdditionalTypes_Rangeslider {
 	}
 
 	public function shortcode_handler( $tag ) {
-        /** @todo is it still required ? */
-		$tag = new WPCF7_Shortcode( $tag );
-
 		if ( empty( $tag->name ) ) {
 			return '';
 		}
@@ -143,7 +140,7 @@ final class CF7_AdditionalTypes_Rangeslider {
 		<?php
 	}
 
-	public function messages( $messages ) {
+	/* public function messages( $messages ) {
 		return array_merge(
 			$messages,
 			[
@@ -163,5 +160,5 @@ final class CF7_AdditionalTypes_Rangeslider {
 				),
 			]
 		);
-	}
+	} */
 }
