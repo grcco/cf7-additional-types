@@ -5,8 +5,8 @@ Tags: contact form 7, cf7, additional, extra, input fields, rangeslider, slider
 Requires at least: 4.2
 Tested up to: 4.5.3
 Stable tag: 4.5.3
-License: GNU General Public License v3.0
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Additional input field types for Contact Form 7.
 

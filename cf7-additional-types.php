@@ -11,10 +11,6 @@
  * Text Domain: cf7-additional-types
  * Domain Path: /languages
  *
- * Copyright: © 2017 meostudio OÜ
- * License: GNU General Public License v3.0
- * License URI: http://www.gnu.org/licenses/gpl-3.0.html
- *
  * Credits:
  * this plugin uses Ion.RangeSlider and Ion.Calendar, distributed under the MIT license.
  */
