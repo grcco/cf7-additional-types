@@ -26,7 +26,7 @@ Implemented Types:
     HTML5-based date picker (using Ion.Calendar jQuery Plugin)
 
 
-Types I am considering the next version:
+Types I am considering for the next version:
 
 Time Picker, On/Off Toggles.
 
